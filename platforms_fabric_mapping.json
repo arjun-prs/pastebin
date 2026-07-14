@@ -1,0 +1,58 @@
+[
+    {
+        "platform": "net.ad_ifabv1_t0_",
+        "fabric_version": "ifab1.1",
+        "link_count": null
+    },
+    {
+        "platform": "net.ad_ifabv1_t1_",
+        "fabric_version": "ifab1.0",
+        "link_count": null
+    },
+    {
+        "platform": "net.ad_gfab_v1_400_t1_1.04",
+        "fabric_version": "gfab1.4",
+        "link_count": {
+            "t0_t1": 512,
+            "t1_t2": 512
+        }
+    },
+    {
+        "platform": "net.ad_gfab_v1_400_t1_1.01",
+        "fabric_version": "gfab1.0",
+        "link_count": {
+            "t0_t1": 512,
+            "t1_t2": 512
+        }
+    },  
+    {
+        "platform": "net.ad_qfabv2_t1_1.02",
+        "fabric_version": "qfab2.1",
+        "link_count": 2048
+    },
+    {
+        "platform": "net.ad_qfabv2_t1_1.01",
+        "fabric_version": "qfab2.0",
+        "link_count": 1024
+    },
+    {
+        "platform": "net.ad_qfabv2_t1_t0_gpu_",
+        "fabric_version": "qfab2.0",
+        "link_count": 1024
+    },  
+    {
+        "platform": "qfabv3_t0",
+        "fabric_version": "qfab3.0",
+        "link_count": 8192
+    },
+    {
+        "platform": "qfabv3_t1",
+        "fabric_version": "qfab3.0",
+        "link_count": 8192
+    },
+    {
+        "platform": "qfab_cfab",
+        "fabric_version": "qfab1.0",
+        "link_count": 512
+    }
+]

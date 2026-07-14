@@ -1,0 +1,160 @@
+{
+  "server_models": {
+    "B200": {"gpu_per_node": 8},
+    "B300": {"gpu_per_node": 8},
+    "GB200": {"gpu_per_node": 72},
+    "GB300": {"gpu_per_node": 72},
+    "RTX6k/B40": {"gpu_per_node": 24}
+  },
+  "network": {
+    "QFAB3.0": {
+      "t1_platform": "net.ad_qfabv3_t1_1.03",
+      "t1_platform_required": 8,
+      "t0_platform": "net.ad_qfabv3_t0_1.03",
+      "t0_platform_required": 2,
+      "server_platform":[{"B300":{"GPU_V5_X11_B300_R.03":64}}]
+    },
+    "QFAB3.0_ONOS": {
+      "t1_platform": "net.ad_qfabv3_t1_1.13",
+      "t1_platform_required": 8,
+      "t0_platform": "net.ad_qfabv3_t0_1.13",
+      "t0_platform_required": 2,
+      "server_platform":[{"B300":{"GPU_V5_X11_B300_R.03":64}}]
+    },
+    "Multi-Planar Spectrum 8K GPU": {
+      "t1_platform": "net.ad_spc4_planar_qfab_t1_1.01",
+      "t1_platform_required": 16,
+      "t0_platform": "net.ad_spc4_planar_qfab_t0_1.01",
+      "t0_platform_required": 4,
+      "ipr_platform": "net.ad_spc4_planar_qfab_ipr_1.01",
+      "ipr_platform_required": 1,
+      "server_platform":[{"B300":{"GPU_V5_X11_B300_R.03":128}},{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "Multi-Planar Spectrum 16K GPU": {
+      "t1_platform": "net.ad_spc4_planar_qfab_t1_1.01",
+      "t1_platform_required": 32,
+      "t0_platform": "net.ad_spc4_planar_qfab_t0_1.01",
+      "t0_platform_required": 4,
+      "ipr_platform": "net.ad_spc4_planar_qfab_ipr_1.01",
+      "ipr_platform_required": 1,
+      "server_platform":[{"B300":{"GPU_V5_X11_B300_R.03":128}},{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "Multi-Planar Spectrum 32K GPU": {
+      "t1_platform": "net.ad_spc4_planar_qfab_t1_1.01",
+      "t1_platform_required": 64,
+      "t0_platform": "net.ad_spc4_planar_qfab_t0_1.01",
+      "t0_platform_required": 4,
+      "ipr_platform": "net.ad_spc4_planar_qfab_ipr_1.01",
+      "ipr_platform_required": 1,
+      "server_platform":[{"B300":{"GPU_V5_X11_B300_R.03":128}},{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Arista Small": {
+      "t2_platform": "net.ad_gfab6_t2_1.02",
+      "t2_platform_required": 32,
+      "t1_platform": "net.ad_gfab6_t1_1.06",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.03",
+      "t0_platform_required": 4,     
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Arista Medium": {
+      "t2_platform": "net.ad_gfab6_t2_1.02",
+      "t2_platform_required": 64,
+      "t1_platform": "net.ad_gfab6_t1_1.06",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.03",
+      "t0_platform_required": 4,
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Arista Large": {
+      "t2_platform": "net.ad_gfab6_t2_1.02",
+      "t2_platform_required": 128,
+      "t1_platform": "net.ad_gfab6_t1_1.06",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.03",
+      "t0_platform_required": 4,
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Spectrum Small": {
+      "t2_platform": "net.ad_gfab6_t2_1.03",
+      "t2_platform_required": 32,
+      "t1_platform": "net.ad_gfab6_t1_1.05",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.05",
+      "t0_platform_required": 4,
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Spectrum Medium": {
+      "t2_platform": "net.ad_gfab6_t2_1.03",
+      "t2_platform_required": 64,
+      "t1_platform": "net.ad_gfab6_t1_1.05",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.05",
+      "t0_platform_required": 4,
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update Yet":7}}]
+    },
+    "GFAB6.0 Spectrum Large": {
+      "t2_platform": "net.ad_gfab6_t2_1.03",
+      "t2_platform_required": 128,
+      "t1_platform": "net.ad_gfab6_t1_1.05",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_gfab6_t0_1.05",
+      "t0_platform_required": 4,
+      "server_platform":[{"GB300":{"GPU_GB300_NVL72_R.03":7}},{"GB200":{"#Need to update yet":7}}]
+    },
+    "B200 QFAB2.0": {
+      "t1_platform": "net.ad_qfabv2_t1_1.04",
+      "t1_platform_required": 2,
+      "_comment": "t1_platform_required need to confirm as per BOM is it 2 howerver as per design it looks like it should be 4",
+      "t0_platform": "net.ad_qfabv2_t0_1.04",
+      "t0_platform_required": 4,
+      "server_platform":[{"B200":{"GPU_V5_X11_B200_R.01":64}}]
+    },
+    "B200 QFAB2.1": {
+      "t1_platform": "net.ad_qfabv2_t1_1.03",
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_qfabv2_t0_1.04",
+      "t0_platform_required": 8,
+      "server_platform":[{"B200":{"GPU_V5_X11_B200_R.01":64}}]
+    },
+    "B200 QFAB3.0": {
+      "t1_platforms": ["net.ad_qfabv3_t1_1_rr.02","net.ad_qfabv3_t1_1.02"],
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_qfabv3_t0_1.01",
+      "t0_platform_required": 1,
+      "server_platform":[{"B200":{"GPU_V5_X11_B200_R.01":64}}]
+    },
+    "B200 QFAB3.0_ONOS": {
+      "t1_platforms": ["net.ad_qfabv3_t1_1_rr.12","net.ad_qfabv3_t1_1.12"],
+      "t1_platform_required": 4,
+      "t0_platform": "net.ad_qfabv3_t0_1.01",
+      "t0_platform_required": 1,
+      "server_platform":[{"B200":{"GPU_V5_X11_B200_R.01":64}}]
+    },
+    "RTX6k/B40 QFAB3.0": {
+      "t1_platforms": ["net.ad_qfabv3_t1_1.03"],
+      "t1_platform_required": 8,
+      "t0_platform": "net.ad_qfabv3_t0_1.03",
+      "t0_platform_required": 1,
+      "server_platform":[{"RTX6k/B40":{"GPU_RTX_AI1-8Pc_R.01":21}}]
+    },
+    "cfab2.0_B300_B200": {
+      "t1_platforms": [
+        "net.ad_cfab_v2_t1_t2_1.11",
+        "net.ad_cfab_v2_t1_t2_2.11"
+      ],
+      "t1_platform_required": 1,
+      "t0_platform": "net.ad_cfab_t0_1.05",
+      "t0_platform_required": 2
+    },
+    "cfab2.0_GB300_GB200": {
+      "t1_platforms": [
+        "net.ad_cfab_v2_t1_t2_5.01",
+        "net.ad_cfab_v2_t1_t2_6.01"
+      ],
+      "t1_platform_required": 1,
+      "t0_platform": "net.ad_cfab_t0_1.04",
+      "t0_platform_required": 2
+    }
+  }
+}

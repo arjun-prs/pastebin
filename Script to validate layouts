@@ -1,0 +1,94 @@
+function main(workbook: ExcelScript.Workbook) {
+
+    // Get active worksheet (must be the raw data sheet)
+    const sourceSheet = workbook.getActiveWorksheet();
+    const sourceRange = sourceSheet.getUsedRange();
+
+    if (!sourceRange) {
+        throw new Error("No data found on the active sheet.");
+    }
+
+    // Helper: delete sheet if it already exists
+    function recreateSheet(name: string): ExcelScript.Worksheet {
+        const existing = workbook.getWorksheet(name);
+        if (existing) {
+            existing.delete();
+        }
+        return workbook.addWorksheet(name);
+    }
+
+    // ==============================
+    // Pivot 1: Placement Group
+    // ==============================
+    const sheet1 = recreateSheet("PlacementGroup");
+    const pivot1 = workbook.addPivotTable(
+        "Pivot_PlacementGroup",
+        sourceRange,
+        sheet1.getRange("A3")
+    );
+
+    pivot1.addColumnHierarchy(pivot1.getHierarchy("PLACEMENT_GROUP"));
+    pivot1.addRowHierarchy(pivot1.getHierarchy("ROOM_NAME"));
+    pivot1.addRowHierarchy(pivot1.getHierarchy("PLATFORM"));
+    pivot1.addDataHierarchy(pivot1.getHierarchy("PLATFORM"));
+
+    // ==============================
+    // Pivot 2: Cfab Block
+    // ==============================
+    const sheet2 = recreateSheet("CfabBlock");
+    const pivot2 = workbook.addPivotTable(
+        "Pivot_CfabBlock",
+        sourceRange,
+        sheet2.getRange("A3")
+    );
+
+    pivot2.addRowHierarchy(pivot2.getHierarchy("ROOM_NAME"));
+    pivot2.addRowHierarchy(pivot2.getHierarchy("PLATFORM"));
+    pivot2.addColumnHierarchy(pivot2.getHierarchy("CFAB_FABRIC_BLOCK"));
+    pivot2.addDataHierarchy(pivot2.getHierarchy("PLATFORM"));
+
+    // ==============================
+    // Pivot 3: Qfab Instance
+    // ==============================
+    const sheet3 = recreateSheet("QfabInstance");
+    const pivot3 = workbook.addPivotTable(
+        "Pivot_QfabInstance",
+        sourceRange,
+        sheet3.getRange("A3")
+    );
+
+    pivot3.addColumnHierarchy(pivot3.getHierarchy("QFAB_INSTANCE_ID"));
+    pivot3.addRowHierarchy(pivot3.getHierarchy("ROOM_NAME"));
+    pivot3.addRowHierarchy(pivot3.getHierarchy("PLATFORM"));
+    pivot3.addDataHierarchy(pivot3.getHierarchy("PLATFORM"));
+
+    // ==============================
+    // Pivot 4: Block Name + Cfab Block
+    // ==============================
+    const sheet4 = recreateSheet("BlockName-CfabBlock");
+    const pivot4 = workbook.addPivotTable(
+        "Pivot_BlockName_CfabBlock",
+        sourceRange,
+        sheet4.getRange("A3")
+    );
+
+    pivot4.addRowHierarchy(pivot4.getHierarchy("BLOCK_NAME"));
+    pivot4.addRowHierarchy(pivot4.getHierarchy("CFAB_FABRIC_BLOCK"));
+    pivot4.addRowHierarchy(pivot4.getHierarchy("PLATFORM"));
+
+    // ==============================
+    // Pivot 5: Cfab Block + Placement Group
+    // ==============================
+    const sheet5 = recreateSheet("CfabBlock-PlacementGroup");
+    const pivot5 = workbook.addPivotTable(
+        "Pivot_CfabBlock_PlacementGroup",
+        sourceRange,
+        sheet5.getRange("A3")
+    );
+
+    pivot5.addColumnHierarchy(pivot5.getHierarchy("BLOCK_NAME"));
+    pivot5.addRowHierarchy(pivot5.getHierarchy("PLATFORM"));
+    pivot5.addRowHierarchy(pivot5.getHierarchy("PLACEMENT_GROUP"));
+    const data5 = pivot5.addDataHierarchy(pivot5.getHierarchy("PLACEMENT_GROUP"));
+    data5.setSummarizeBy(ExcelScript.AggregationFunction.count);
+}
