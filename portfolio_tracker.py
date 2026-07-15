@@ -66,15 +66,38 @@ NPSNAV_SCHEME_CODES = {
 PPF_HOLDINGS = [
     {
         "name": "Arjun R PPF",
+        "tag": "PPF",
         "source_file": "Holdings Statement_Arjun&#039;s Portfolio_10-Jun-2026.xls",
         "as_of_date": "10-Jun-2026",
         "invested": 181_500.00,
         "current_value": 239_476.50,
         "annualized_pct": 7.1,
+        "bond_weight": 1.0,
+    },
+    {
+        "name": "EPF Employer Contribution",
+        "tag": "EPF",
+        "source_files": [
+            "BGBNG00423570000324783_2025.pdf",
+            "BGBNG00423570000324783_2026.pdf",
+        ],
+        "as_of_date": "15-Jul-2026",
+        "invested": 71_326.00,
+        "current_value": 71_406.00,
+        "invested_label": "Employer Contributions",
+        "value_label": "Employer Balance",
+        "return_label": "Interest / Delta",
+        "cashflows": [
+            ("01-Feb-2026", -11_566.00),
+            ("01-Mar-2026", -14_940.00),
+            ("01-Apr-2026", -14_940.00),
+            ("01-May-2026", -14_940.00),
+            ("01-Jun-2026", -14_940.00),
+        ],
+        "bond_weight": 1.0,
     },
 ]
 
-BOND_PPF_HOLDING_NAME = "Arjun R PPF"
 BOND_NPS_TIER_NAME = "Tier I"
 BOND_NPS_TIER_WEIGHT = 0.25
 
@@ -142,11 +165,22 @@ def parse_args():
         action="store_false",
         help="Use NPS values from the latest statement CSVs without fetching live npsnav.in NAVs.",
     )
+    parser.add_argument(
+        "--trailing-returns",
+        "--trailing-annualized-returns",
+        dest="show_trailing_returns",
+        action="store_true",
+        help=(
+            "Show trailing annualized returns for current NPS and active stock holdings. "
+            "Hidden by default because it requires historical NAV, price, and FX data."
+        ),
+    )
     parser.set_defaults(live_nps_nav=None)
     return parser.parse_args()
 
 
 ARGS = parse_args()
+SHOW_TRAILING_RETURNS = ARGS.show_trailing_returns
 LIVE_NPS_NAV_ENV = os.getenv("LIVE_NPS_NAV", "").strip().lower()
 if ARGS.live_nps_nav is not None:
     LIVE_NPS_NAV = ARGS.live_nps_nav
@@ -1184,11 +1218,14 @@ overall_today_dates = [
 ]
 overall_today_as_of = min(overall_today_dates) if overall_today_dates else None
 
-trailing_return_results, trailing_return_issues = compute_trailing_annualized_returns(
-    tier_data,
-    active_stocks,
-    usd_inr,
-)
+if SHOW_TRAILING_RETURNS:
+    trailing_return_results, trailing_return_issues = compute_trailing_annualized_returns(
+        tier_data,
+        active_stocks,
+        usd_inr,
+    )
+else:
+    trailing_return_results, trailing_return_issues = [], []
 
 
 # ================================================================
@@ -1350,18 +1387,30 @@ if ppf_holdings:
         gain = cv - invested
         pct = (gain / invested) * 100 if invested else 0
         weight_pct = (cv / portfolio_current_value) * 100 if portfolio_current_value > 0 else 0
+        source_files = holding.get("source_files")
+        source_text = ", ".join(source_files) if source_files else holding.get("source_file", "-")
+        tag = holding.get("tag", "PPF")
 
-        print(f"  {BOLD}{holding['name']}{RESET}  {DIM}[PPF]{RESET}")
+        print(f"  {BOLD}{holding['name']}{RESET}  {DIM}[{tag}]{RESET}")
         print(
-            f"  {DIM}Source: {holding['source_file']} | "
+            f"  {DIM}Source: {source_text} | "
             f"As of: {format_date(holding.get('as_of_date'))}{RESET}"
         )
         print()
-        lrow("    Invested", format_inr(invested))
-        lrow("    Value", format_inr(cv))
-        lrow("    Return", colorize(gain, f"{format_inr(gain)}  ({pct:+.2f}%)"))
-        if holding.get("annualized_pct") is not None:
-            lrow("    Annualized XIRR", f"{holding['annualized_pct']:+.2f}% pa")
+        lrow(f"    {holding.get('invested_label', 'Invested')}", format_inr(invested))
+        lrow(f"    {holding.get('value_label', 'Value')}", format_inr(cv))
+        lrow(
+            f"    {holding.get('return_label', 'Return')}",
+            colorize(gain, f"{format_inr(gain)}  ({pct:+.2f}%)"),
+        )
+        for label, value in holding.get("extra_rows", []):
+            lrow(f"    {label}", format_inr(value), width=36)
+        holding_xirr_pct = holding.get("annualized_pct")
+        if holding_xirr_pct is None and holding.get("cashflows"):
+            as_of_date = parse_date_flexible(holding.get("as_of_date")) or datetime.now()
+            holding_xirr_pct = xirr_pct(list(holding["cashflows"]) + [(as_of_date, cv)])
+        if holding_xirr_pct is not None:
+            lrow("    Annualized XIRR", f"{holding_xirr_pct:+.2f}% pa")
         lrow("    Portfolio %", f"{weight_pct:.2f}%")
         print()
 
@@ -1413,6 +1462,10 @@ for stock in active_stocks:
 
 for holding in ppf_holdings:
     as_of_date = parse_date_flexible(holding.get("as_of_date")) or datetime.now()
+    if holding.get("cashflows"):
+        combined_cashflows.extend(holding["cashflows"])
+        combined_cashflows.append((as_of_date, holding["current_value"]))
+        continue
     start_date = implied_start_date_from_annualized(
         holding.get("invested"),
         holding.get("current_value"),
@@ -1482,13 +1535,12 @@ if total_value > 0:
     #lrow("  NPS Allocation", f"{nps_weight:.2f}%")
     #lrow("  Stocks Allocation", f"{stocks_weight:.2f}%")
 
-    bond_ppf_value = sum(
-        h.get("current_value") or 0.0
+    bond_other_value = sum(
+        (h.get("current_value") or 0.0) * (h.get("bond_weight") or 0.0)
         for h in ppf_holdings
-        if h.get("name") == BOND_PPF_HOLDING_NAME
     )
     bond_nps_tier_value = (tier_data.get(BOND_NPS_TIER_NAME, {}).get("current_value") or 0.0) * BOND_NPS_TIER_WEIGHT
-    bond_value = bond_ppf_value + bond_nps_tier_value
+    bond_value = bond_other_value + bond_nps_tier_value
     equity_value = total_value - bond_value
     bond_pct = (bond_value / total_value) * 100
     equity_pct = (equity_value / total_value) * 100
@@ -1504,6 +1556,6 @@ nps_value_note = (
     if live_nps_values_used
     else "NPS value uses the latest statement CSV."
 )
-print(f"{DIM}  Note: {nps_value_note} NPS annualized return uses the XIRR from the latest statement CSV. PPF uses the holdings-statement snapshot. Overall XIRR combines equivalent dated cashflows for NPS/PPF with actual ANET/ORCL purchase dates; CSCO sale proceeds are excluded.{RESET}")
+print(f"{DIM}  Note: {nps_value_note} NPS annualized return uses the XIRR from the latest statement CSV. PPF and EPF use statement/passbook snapshots. Overall XIRR combines equivalent dated cashflows for NPS/PPF/EPF with actual ANET/ORCL purchase dates; CSCO sale proceeds are excluded.{RESET}")
 divider("=")
 print()
